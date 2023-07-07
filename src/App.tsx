@@ -14,15 +14,22 @@ function App() {
   function newCharacter(refObject: refObject) {
     let newCharacter: Character = new Character();
     let currentProp;
+    let maxId = -1;
+    characterArray.map((e) => {
+      if (maxId > e.id) maxId = e.id;
+    });
     for (const e in newCharacter) {
       currentProp = newCharacter[e as keyof typeof newCharacter];
-      if (currentProp.hasOwnProperty("type"))
+      if (e === "id") {
+        currentProp = maxId === -1 ? 0 : maxId;
+      } else if (currentProp.hasOwnProperty("type"))
         currentProp.value = getTargetValue(refObject[e]);
     }
 
     let newCharArray = [...characterArray, newCharacter];
 
     setCharacterArray((characterArray = newCharArray));
+    console.log(characterArray);
   }
 
   return (
