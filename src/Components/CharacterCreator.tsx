@@ -13,12 +13,14 @@ export function CharacterMenu({ newChar }: Props) {
   let charDummy = new Character();
   let characterPropsList = Object.getOwnPropertyNames(charDummy);
   let refObject: refObject = {};
+  let currentProp;
 
   return (
     <div>
       {characterPropsList.map((e: string, k: number) => {
-        let currentProp = charDummy[e as keyof typeof charDummy];
+        currentProp = charDummy[e as keyof typeof charDummy] || {};
         if (currentProp.hasOwnProperty("type")) {
+          currentProp = charDummy[e as keyof typeof charDummy];
           refObject[e] = createRef();
           return (
             <div key={k}>
