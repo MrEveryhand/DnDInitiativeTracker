@@ -1,10 +1,12 @@
-import { RefObject, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import "./App.css";
 import { CharacterMenu, refObject } from "./Components/CharacterCreator";
 import { Character } from "./Configs/CharacterConfig";
+import CharacterCard from "./Components/CharacterCard";
 
 function App() {
   let [characterArray, setCharacterArray] = useState<Character[]>([]);
+  let dragCard = useRef(null);
 
   function getTargetValue(ref: RefObject<HTMLInputElement>) {
     let target = ref.current;
@@ -22,8 +24,7 @@ function App() {
     for (const e in newCharacter) {
       currentProp = newCharacter[e as keyof typeof newCharacter];
       if (e === "id") {
-        newCharacter[e as keyof typeof newCharacter] =
-          maxId === -1 ? 0 : maxId + 1;
+        newCharacter.id = maxId === -1 ? 0 : maxId + 1;
       } else if (currentProp.hasOwnProperty("type"))
         currentProp.value = getTargetValue(refObject[e]);
     }
@@ -36,7 +37,12 @@ function App() {
 
   return (
     <div className="App">
-      <CharacterMenu newChar={newCharacter} />
+      <div className="menuAndDraft">
+        <CharacterMenu newChar={newCharacter} />
+        <CharacterCard characters={characterArray} cardsRef={dragCard} />
+      </div>
+      <div className="battleQueue"></div>
+      <div className="holdQueue"></div>
     </div>
   );
 }

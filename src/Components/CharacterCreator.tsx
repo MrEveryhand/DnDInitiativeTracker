@@ -16,14 +16,14 @@ export function CharacterMenu({ newChar }: Props) {
   let currentProp;
 
   return (
-    <div>
+    <div className="charGenMenu">
       {characterPropsList.map((e: string, k: number) => {
         currentProp = charDummy[e as keyof typeof charDummy] || {};
         if (currentProp.hasOwnProperty("type")) {
           currentProp = charDummy[e as keyof typeof charDummy];
           refObject[e] = createRef();
           return (
-            <div key={k}>
+            <div key={k} className="charGenProp">
               {currentProp.label} :
               <input ref={refObject[e]} type={currentProp.type} />
             </div>
@@ -34,3 +34,5 @@ export function CharacterMenu({ newChar }: Props) {
     </div>
   );
 }
+
+export default CharacterMenu;
