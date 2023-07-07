@@ -16,12 +16,14 @@ function App() {
     let currentProp;
     let maxId = -1;
     characterArray.map((e) => {
-      if (maxId > e.id) maxId = e.id;
+      console.log(e.id);
+      if (maxId < e.id) maxId = e.id;
     });
     for (const e in newCharacter) {
       currentProp = newCharacter[e as keyof typeof newCharacter];
       if (e === "id") {
-        currentProp = maxId === -1 ? 0 : maxId;
+        newCharacter[e as keyof typeof newCharacter] =
+          maxId === -1 ? 0 : maxId + 1;
       } else if (currentProp.hasOwnProperty("type"))
         currentProp.value = getTargetValue(refObject[e]);
     }
