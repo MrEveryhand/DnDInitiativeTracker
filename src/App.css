@@ -29,6 +29,14 @@
   cursor: move;
 }
 
+.dropDivider {
+  background-color: chocolate;
+  margin: 5px 0px;
+  width: 5px;
+  height: 200px;
+  float: left;
+}
+
 .battleQueue {
   height: 200px;
   background-color: gray;
