@@ -1,77 +1,100 @@
-import { RefObject, useRef, useState } from "react";
+import { Fragment, RefObject, useRef, useState } from "react";
 import "./App.css";
 import { CharacterMenu, refObject } from "./Components/CharacterCreator";
-import { Character, characterParameter } from "./Configs/CharacterConfig";
+import { Character, propsExceptions } from "./Configs/CharacterConfig";
 import CharacterCard from "./Components/CharacterCard";
+import BattleCard from "./Components/BattleQueueCard";
+import HoldCard from "./Components/HoldQueueCard";
+import {
+  newCharacter,
+  copyCharacter,
+  searchCharacter,
+  battleQueueOnDrop,
+  holdQueueOnDrop,
+  getTargetValue,
+} from "./Lib/MainArraysFunctions";
 
 function App() {
   let [characterArray, setCharacterArray] = useState<Character[]>([]);
-  let [overlay, setOverlay] = useState<boolean>(false);
+  let [battleQueueArray, setBattleQueue] = useState<Character[]>([]);
+  let [holdQueueArray, setHoldQueue] = useState<Character[]>([]);
   const [value, setValue] = useState(0);
-
-  function getTargetValue(ref: RefObject<HTMLInputElement>) {
-    let target = ref.current;
-    return target?.value;
-  }
 
   function useForceUpdate() {
     setValue((value) => value + 1);
   }
 
-  function newCharacter(refObject: refObject) {
-    let newCharacter: Character = new Character();
-    let currentProp: any;
-    let maxId = -1;
-    characterArray.map((e, i) => {
-      if (maxId < e.id) maxId = e.id;
-    });
-    for (const e in newCharacter) {
-      currentProp = newCharacter[e as keyof typeof newCharacter];
-      if (typeof currentProp !== "object") {
-        if (e === "id") {
-          newCharacter.id = maxId === -1 ? 0 : maxId + 1;
-        } else if (e === "arrayPosition") {
-          newCharacter.arrayPosition = characterArray.length;
-        }
-      } else {
-        if (currentProp.hasOwnProperty("type"))
-          currentProp.value = getTargetValue(refObject[e]);
-      }
-    }
-
-    let newCharArray = [...characterArray, newCharacter];
-    setCharacterArray((characterArray = newCharArray));
-  }
-
-  function changeCharArray(e: number, i: number) {
-    let charBuffer = characterArray[e];
-
-    characterArray.splice(e < i ? i + 1 : i, 0, charBuffer);
-    characterArray.splice(e > i ? e + 1 : e, 1);
-
-    characterArray.map((e, i) => {
-      e.arrayPosition = i;
-      e.isDragging = false;
-      e.cardIsOver = false;
-    });
-
-    let newCharArray = [...characterArray];
-
-    setCharacterArray((characterArray = newCharArray));
-  }
-
   return (
     <div className="App">
       <div className="menuAndDraft">
-        <CharacterMenu newChar={newCharacter} />
+        <CharacterMenu
+          charactersArray={characterArray}
+          newChar={newCharacter}
+          setFunc={setCharacterArray}
+          targetFunc={getTargetValue}
+        />
         <CharacterCard
           characters={characterArray}
           forceRender={useForceUpdate}
-          changeCharArray={changeCharArray}
+          setFunc={setCharacterArray}
         />
       </div>
-      <div className="battleQueue"></div>
-      <div className="holdQueue"></div>
+      <div
+        className="battleQueue"
+        onDragOver={(e) => {
+          if (
+            !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
+            !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
+          ) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        }}
+        onDrop={(e) =>
+          battleQueueOnDrop(e, characterArray, battleQueueArray, setBattleQueue)
+        }
+      >
+        {
+          <BattleCard
+            battleQueue={battleQueueArray}
+            forceRender={useForceUpdate}
+          />
+        }
+      </div>
+      <div
+        className="holdQueue"
+        onDragOver={(e) => {
+          if (
+            !!JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
+            !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue &&
+            !searchCharacter(
+              holdQueueArray,
+              "battleId",
+              JSON.parse(e.dataTransfer.getData("object")).id
+            )
+          ) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        }}
+        onDrop={(e) =>
+          holdQueueOnDrop(
+            e,
+            characterArray,
+            battleQueueArray,
+            holdQueueArray,
+            setBattleQueue
+          )
+        }
+      >
+        {
+          <HoldCard
+            holdQueue={holdQueueArray}
+            forceRender={useForceUpdate}
+            setFunc={setHoldQueue}
+          />
+        }
+      </div>
     </div>
   );
 }

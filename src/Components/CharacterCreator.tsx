@@ -1,25 +1,47 @@
-import { Component, RefObject, createRef } from "react";
-import { Character, characterParameter } from "../Configs/CharacterConfig";
+import {
+  Component,
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  createRef,
+} from "react";
+import { Character, propsExceptions } from "../Configs/CharacterConfig";
 
 interface Props {
-  newChar: (refArray: refObject) => void;
+  charactersArray: Character[];
+  newChar: (
+    refObject: refObject,
+    arrayToMap: Character[],
+    setFunc: Function,
+    getTargetValue: Function
+  ) => void;
+  setFunc: Dispatch<SetStateAction<Character[]>>;
+  targetFunc: (ref: RefObject<HTMLInputElement>) => string | undefined;
 }
 
 export interface refObject {
   [key: string]: any;
 }
 
-export function CharacterMenu({ newChar }: Props) {
+export function CharacterMenu({
+  charactersArray,
+  newChar,
+  setFunc,
+  targetFunc,
+}: Props) {
   let charDummy = new Character();
   let characterPropsList = Object.getOwnPropertyNames(charDummy);
   let refObject: refObject = {};
-  let currentProp;
+  let currentProp: any;
 
   return (
     <div className="charGenMenu">
       {characterPropsList.map((e: string, k: number) => {
         currentProp = charDummy[e as keyof typeof charDummy] || {};
-        if (currentProp.hasOwnProperty("type")) {
+        if (
+          currentProp.hasOwnProperty("type") &&
+          !propsExceptions.hasOwnProperty(e)
+        ) {
           currentProp = charDummy[e as keyof typeof charDummy];
           refObject[e] = createRef();
           return (
@@ -30,7 +52,11 @@ export function CharacterMenu({ newChar }: Props) {
           );
         }
       })}
-      <button onClick={() => newChar(refObject)}>Create</button>
+      <button
+        onClick={() => newChar(refObject, charactersArray, setFunc, targetFunc)}
+      >
+        Create
+      </button>
     </div>
   );
 }

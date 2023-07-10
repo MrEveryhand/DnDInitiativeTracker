@@ -1,22 +1,22 @@
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, SetStateAction } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { changeArray } from "../Lib/MainArraysFunctions";
 
 interface Props {
-  characters: Character[];
+  holdQueue: Character[];
   forceRender: () => void;
   setFunc: Dispatch<SetStateAction<Character[]>>;
 }
 
-export function CharacterCard({ characters, forceRender, setFunc }: Props) {
+export function HoldCard({ holdQueue, forceRender, setFunc }: Props) {
   return (
-    <div className="charDraftArea">
-      {characters.map((character: Character, key: number) => {
+    <div>
+      {holdQueue.map((character: Character, key: number) => {
         return (
           <Fragment>
             <div
-              key={key}
-              id={key.toString()}
+              key={key.toString() + "_h"}
+              id={key.toString() + "_h"}
               className="charCard"
               style={{
                 backgroundImage: `url(${character.Image.value})`,
@@ -29,7 +29,7 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
               onDragOver={(e) => {
                 if (
                   !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-                  !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
+                  !!JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
                 ) {
                   character.onDragOver(e);
                   forceRender();
@@ -46,17 +46,14 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
               onDrop={(e) => {
                 if (
                   !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-                  !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
+                  !!JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
                 ) {
-                  character.onDrop(
-                    changeArray(
-                      JSON.parse(e.dataTransfer.getData("object")),
-                      key,
-                      characters,
-                      setFunc
-                    )
+                  changeArray(
+                    JSON.parse(e.dataTransfer.getData("object")),
+                    key,
+                    holdQueue,
+                    setFunc
                   );
-                  forceRender();
                 }
               }}
             >
@@ -66,17 +63,11 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
                 <b>{character.Name.value}</b>
               </div>
               <br />
-              {character.Agility.value}
-              <br />
-              {character.CurrentHP.value}
-              <br />
-              {character.MaxHP.value}
-              <br />
-              {character.State.value}
+              {character.Hold.comment}
               <br />
             </div>
             {!!character.cardIsOver ? (
-              <div className="dropDivider"></div> //Later make animation with neighbour cards move apart
+              <div className="dropDivider"></div> //Make it another component and later make animation with neighbour cards move apart
             ) : null}
           </Fragment>
         );
@@ -85,4 +76,4 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
   );
 }
 
-export default CharacterCard;
+export default HoldCard;

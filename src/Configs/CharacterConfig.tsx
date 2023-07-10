@@ -11,6 +11,8 @@ interface Hold {
 
 export class Character {
   id!: number;
+  battleId!: number;
+  holdId!: number;
   arrayPosition!: number;
   Name: characterParameter;
   Image: characterParameter;
@@ -20,6 +22,8 @@ export class Character {
   MaxHP: characterParameter;
   State: characterParameter;
   Hold: Hold;
+  inBattleQueue: boolean = false;
+  inHoldQueue: boolean = false;
   constructor() {
     this.Name = {
       label: "Name", //Later create another language config and make dependencies with it
@@ -69,6 +73,7 @@ export class Character {
     e.dataTransfer.setData("object", JSON.stringify(character));
   };
   onDragOver = (e: any) => {
+    console.log("DROP");
     this.cardIsOver = true;
     e.stopPropagation();
     e.preventDefault();
@@ -76,13 +81,12 @@ export class Character {
   onDragLeave = () => {
     this.cardIsOver = false;
   };
-  onDrop = (e: any, i: number, endFunc: (e: number, i: number) => void) => {
-    // this.isDragging = false;
-    // this.cardIsOver = false;
-    let charBuffer: Character = JSON.parse(e.dataTransfer.getData("object"));
-    endFunc(charBuffer.arrayPosition, i);
+  onDrop = (endFunc: void) => {
+    endFunc;
   };
   onDragEnd = () => {
     this.isDragging = false;
   };
 }
+
+export var propsExceptions: object = { Initiative: -1 };
