@@ -35,17 +35,12 @@ export function newCharacter(
   setFunc((arrayToMap = newCharArray));
 }
 
-export function copyCharacter(
-  originalCharacter: Character,
-  arayToMap: Character[]
-) {
+export function copyCharacter(originalCharacter: Character) {
   let newCharacter: Character = new Character();
   let currentProp: any;
-  let maxId = -1;
+
   let currentOriginalProp: any;
-  arayToMap.map((e, i) => {
-    if (maxId < e.id) maxId = e.id;
-  });
+
   for (const e in newCharacter) {
     currentProp = newCharacter[e as keyof typeof newCharacter];
     currentOriginalProp =
@@ -83,33 +78,42 @@ export function searchCharacter(
   return idFound;
 }
 
-export function changeArray(
-  e: number,
-  i: number,
-  array: Character[],
-  setFunc: Function
-) {
-  let charBuffer = array[e];
+export function changeArray(id: number, newIndex: number, array: Character[]) {
+  let charBuffer: Character;
+  let elementFound: any = array.find((e) => e.id === id);
+  if (elementFound !== undefined) charBuffer = elementFound;
+  else return;
 
-  array.splice(e < i ? i + 1 : i, 0, charBuffer);
-  array.splice(e > i ? e + 1 : e, 1);
+  array.splice(charBuffer.arrayPosition, 1);
+  array.splice(
+    charBuffer.arrayPosition < newIndex ? newIndex + 1 : newIndex,
+    0,
+    charBuffer
+  );
 
   array.map((e, i) => {
     e.arrayPosition = i;
     e.isDragging = false;
     e.cardIsOver = false;
   });
+}
 
-  let newCharArray = [...array];
-
-  setFunc((array = newCharArray));
+export function battleQueueOnOver(e: any) {
+  {
+    if (
+      !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
+      !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
+    ) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  }
 }
 
 export function battleQueueOnDrop(
   e: any,
   charArray: Character[],
-  battleArray: Character[],
-  setFunc: Function
+  battleArray: Character[]
 ) {
   if (
     !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
@@ -122,7 +126,7 @@ export function battleQueueOnDrop(
     });
 
     let charBuffer: Character = JSON.parse(e.dataTransfer.getData("object"));
-    charBuffer = copyCharacter(charArray[charBuffer.arrayPosition], charArray);
+    charBuffer = copyCharacter(charArray[charBuffer.arrayPosition]);
 
     charBuffer.battleId = maxId === -1 ? 0 : maxId + 1;
     charBuffer.inBattleQueue = true;
@@ -149,10 +153,18 @@ export function battleQueueOnDrop(
         return b.Agility.value - a.Agility.value;
       }
     });
+  }
+}
 
-    let newbattleArray = [...battleArray];
-
-    setFunc((battleArray = newbattleArray));
+export function holdQueueOnOver(e: any, holdQueueArray: Character[]) {
+  let buffer = JSON.parse(e.dataTransfer.getData("object"));
+  if (
+    !!buffer.inBattleQueue &&
+    !buffer.inHoldQueue &&
+    holdQueueArray.find((e) => e.battleId === buffer.battleId) === undefined
+  ) {
+    e.stopPropagation();
+    e.preventDefault();
   }
 }
 
@@ -160,18 +172,14 @@ export function holdQueueOnDrop(
   e: any,
   charArray: Character[],
   battleArray: Character[],
-  holdArray: Character[],
-  setFunc: Function
+  holdArray: Character[]
 ) {
   if (
     !!JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
     !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
   ) {
     let charBuffer: Character = JSON.parse(e.dataTransfer.getData("object"));
-    charBuffer = copyCharacter(
-      battleArray[charBuffer.arrayPosition],
-      charArray
-    );
+    charBuffer = copyCharacter(battleArray[charBuffer.arrayPosition]);
 
     charBuffer.battleId = JSON.parse(e.dataTransfer.getData("object")).battleId;
     charBuffer.inBattleQueue = false;
@@ -190,9 +198,5 @@ export function holdQueueOnDrop(
       e.isDragging = false;
       e.cardIsOver = false;
     });
-
-    let newholdArray = [...holdArray];
-
-    setFunc((holdArray = newholdArray));
   }
 }

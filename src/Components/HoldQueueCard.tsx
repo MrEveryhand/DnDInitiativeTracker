@@ -5,10 +5,9 @@ import { changeArray } from "../Lib/MainArraysFunctions";
 interface Props {
   holdQueue: Character[];
   forceRender: () => void;
-  setFunc: Dispatch<SetStateAction<Character[]>>;
 }
 
-export function HoldCard({ holdQueue, forceRender, setFunc }: Props) {
+export function HoldCard({ holdQueue, forceRender }: Props) {
   return (
     <div>
       {holdQueue.map((character: Character, key: number) => {
@@ -45,14 +44,14 @@ export function HoldCard({ holdQueue, forceRender, setFunc }: Props) {
               }}
               onDrop={(e) => {
                 if (
-                  !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-                  !!JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
+                  !!JSON.parse(e.dataTransfer.getData("object"))
+                    .inBattleQueue &&
+                  !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
                 ) {
                   changeArray(
-                    JSON.parse(e.dataTransfer.getData("object")),
+                    JSON.parse(e.dataTransfer.getData("object")).id,
                     key,
-                    holdQueue,
-                    setFunc
+                    holdQueue
                   );
                 }
               }}

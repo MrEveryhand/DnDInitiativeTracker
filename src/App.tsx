@@ -1,18 +1,11 @@
-import { Fragment, RefObject, useRef, useState } from "react";
+import { useState } from "react";
 import "./App.css";
-import { CharacterMenu, refObject } from "./Components/CharacterCreator";
-import { Character, propsExceptions } from "./Configs/CharacterConfig";
+import { CharacterMenu } from "./Components/CharacterCreator";
+import { Character } from "./Configs/CharacterConfig";
 import CharacterCard from "./Components/CharacterCard";
 import BattleCard from "./Components/BattleQueueCard";
 import HoldCard from "./Components/HoldQueueCard";
-import {
-  newCharacter,
-  copyCharacter,
-  searchCharacter,
-  battleQueueOnDrop,
-  holdQueueOnDrop,
-  getTargetValue,
-} from "./Lib/MainArraysFunctions";
+import * as MainLib from "./Lib/MainArraysFunctions";
 
 function App() {
   let [characterArray, setCharacterArray] = useState<Character[]>([]);
@@ -29,29 +22,20 @@ function App() {
       <div className="menuAndDraft">
         <CharacterMenu
           charactersArray={characterArray}
-          newChar={newCharacter}
+          newChar={MainLib.newCharacter}
           setFunc={setCharacterArray}
-          targetFunc={getTargetValue}
+          targetFunc={MainLib.getTargetValue}
         />
         <CharacterCard
           characters={characterArray}
           forceRender={useForceUpdate}
-          setFunc={setCharacterArray}
         />
       </div>
       <div
         className="battleQueue"
-        onDragOver={(e) => {
-          if (
-            !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-            !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
-          ) {
-            e.stopPropagation();
-            e.preventDefault();
-          }
-        }}
+        onDragOver={(e) => MainLib.battleQueueOnOver(e)}
         onDrop={(e) =>
-          battleQueueOnDrop(e, characterArray, battleQueueArray, setBattleQueue)
+          MainLib.battleQueueOnDrop(e, characterArray, battleQueueArray)
         }
       >
         {
@@ -63,37 +47,17 @@ function App() {
       </div>
       <div
         className="holdQueue"
-        onDragOver={(e) => {
-          if (
-            !!JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-            !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue &&
-            !searchCharacter(
-              holdQueueArray,
-              "battleId",
-              JSON.parse(e.dataTransfer.getData("object")).id
-            )
-          ) {
-            e.stopPropagation();
-            e.preventDefault();
-          }
-        }}
+        onDragOver={(e) => MainLib.holdQueueOnOver(e, holdQueueArray)}
         onDrop={(e) =>
-          holdQueueOnDrop(
+          MainLib.holdQueueOnDrop(
             e,
             characterArray,
             battleQueueArray,
-            holdQueueArray,
-            setBattleQueue
+            holdQueueArray
           )
         }
       >
-        {
-          <HoldCard
-            holdQueue={holdQueueArray}
-            forceRender={useForceUpdate}
-            setFunc={setHoldQueue}
-          />
-        }
+        {<HoldCard holdQueue={holdQueueArray} forceRender={useForceUpdate} />}
       </div>
     </div>
   );

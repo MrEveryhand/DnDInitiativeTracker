@@ -5,10 +5,9 @@ import { changeArray } from "../Lib/MainArraysFunctions";
 interface Props {
   characters: Character[];
   forceRender: () => void;
-  setFunc: Dispatch<SetStateAction<Character[]>>;
 }
 
-export function CharacterCard({ characters, forceRender, setFunc }: Props) {
+export function CharacterCard({ characters, forceRender }: Props) {
   return (
     <div className="charDraftArea">
       {characters.map((character: Character, key: number) => {
@@ -50,10 +49,9 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
                 ) {
                   character.onDrop(
                     changeArray(
-                      JSON.parse(e.dataTransfer.getData("object")),
+                      JSON.parse(e.dataTransfer.getData("object")).id,
                       key,
-                      characters,
-                      setFunc
+                      characters
                     )
                   );
                   forceRender();
