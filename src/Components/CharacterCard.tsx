@@ -50,6 +50,7 @@ export function CharacterCard({ characters, forceRender }: Props) {
                   character.onDrop(
                     changeArray(
                       JSON.parse(e.dataTransfer.getData("object")).id,
+                      "id",
                       key,
                       characters
                     )

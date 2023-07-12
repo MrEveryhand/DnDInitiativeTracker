@@ -78,9 +78,14 @@ export function searchCharacter(
   return idFound;
 }
 
-export function changeArray(id: number, newIndex: number, array: Character[]) {
+export function changeArray(
+  id: number,
+  idToCompare: string,
+  newIndex: number,
+  array: Character[]
+) {
   let charBuffer: Character;
-  let elementFound: any = array.find((e) => e.id === id);
+  let elementFound: any = array.find((e: any) => e[idToCompare] === id);
   if (elementFound !== undefined) charBuffer = elementFound;
   else return;
 
@@ -115,45 +120,40 @@ export function battleQueueOnDrop(
   charArray: Character[],
   battleArray: Character[]
 ) {
-  if (
-    !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-    !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
-  ) {
-    let maxId = -1;
+  let maxId = -1;
 
-    battleArray.map((e, i) => {
-      if (maxId < e.battleId) maxId = e.battleId;
-    });
+  battleArray.map((e, i) => {
+    if (maxId < e.battleId) maxId = e.battleId;
+  });
 
-    let charBuffer: Character = JSON.parse(e.dataTransfer.getData("object"));
-    charBuffer = copyCharacter(charArray[charBuffer.arrayPosition]);
+  let charBuffer: Character = JSON.parse(e.dataTransfer.getData("object"));
+  charBuffer = copyCharacter(charArray[charBuffer.arrayPosition]);
 
-    charBuffer.battleId = maxId === -1 ? 0 : maxId + 1;
-    charBuffer.inBattleQueue = true;
-    charBuffer.Initiative.value = Math.floor(Math.random() * 20) + 1; //Temporary solution <=======!!!
+  charBuffer.battleId = maxId === -1 ? 0 : maxId + 1;
+  charBuffer.inBattleQueue = true;
+  charBuffer.Initiative.value = Math.floor(Math.random() * 20) + 1; //Temporary solution <=======!!!
 
-    battleArray.splice(0, 0, charBuffer);
+  battleArray.splice(0, 0, charBuffer);
 
-    charArray.map((e, i) => {
-      e.arrayPosition = i;
-      e.isDragging = false;
-      e.cardIsOver = false;
-    });
+  charArray.map((e, i) => {
+    e.arrayPosition = i;
+    e.isDragging = false;
+    e.cardIsOver = false;
+  });
 
-    battleArray.map((e, i) => {
-      e.arrayPosition = i;
-      e.isDragging = false;
-      e.cardIsOver = false;
-    });
+  battleArray.map((e, i) => {
+    e.arrayPosition = i;
+    e.isDragging = false;
+    e.cardIsOver = false;
+  });
 
-    battleArray.sort((a: Character, b: Character) => {
-      if (a.Initiative.value !== b.Initiative.value) {
-        return b.Initiative.value - a.Initiative.value;
-      } else {
-        return b.Agility.value - a.Agility.value;
-      }
-    });
-  }
+  battleArray.sort((a: Character, b: Character) => {
+    if (a.Initiative.value !== b.Initiative.value) {
+      return b.Initiative.value - a.Initiative.value;
+    } else {
+      return b.Agility.value - a.Agility.value;
+    }
+  });
 }
 
 export function holdQueueOnOver(e: any, holdQueueArray: Character[]) {
@@ -174,29 +174,26 @@ export function holdQueueOnDrop(
   battleArray: Character[],
   holdArray: Character[]
 ) {
-  if (
-    !!JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-    !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
-  ) {
-    let charBuffer: Character = JSON.parse(e.dataTransfer.getData("object"));
-    charBuffer = copyCharacter(battleArray[charBuffer.arrayPosition]);
+  let charBuffer: Character = JSON.parse(e.dataTransfer.getData("object"));
+  let check: any = battleArray.find((e) => e.battleId === charBuffer.battleId);
+  if (!check) return;
+  charBuffer = copyCharacter(check);
 
-    charBuffer.battleId = JSON.parse(e.dataTransfer.getData("object")).battleId;
-    charBuffer.inBattleQueue = false;
-    charBuffer.inHoldQueue = true;
+  charBuffer.battleId = JSON.parse(e.dataTransfer.getData("object")).battleId;
+  charBuffer.inBattleQueue = false;
+  charBuffer.inHoldQueue = true;
 
-    holdArray.splice(0, 0, charBuffer);
+  holdArray.splice(0, 0, charBuffer);
 
-    charArray.map((e, i) => {
-      e.arrayPosition = i;
-      e.isDragging = false;
-      e.cardIsOver = false;
-    });
+  charArray.map((e, i) => {
+    e.arrayPosition = i;
+    e.isDragging = false;
+    e.cardIsOver = false;
+  });
 
-    holdArray.map((e, i) => {
-      e.arrayPosition = i;
-      e.isDragging = false;
-      e.cardIsOver = false;
-    });
-  }
+  holdArray.map((e, i) => {
+    e.arrayPosition = i;
+    e.isDragging = false;
+    e.cardIsOver = false;
+  });
 }

@@ -73,7 +73,6 @@ export class Character {
     e.dataTransfer.setData("object", JSON.stringify(character));
   };
   onDragOver = (e: any) => {
-    console.log("DROP");
     this.cardIsOver = true;
     e.stopPropagation();
     e.preventDefault();

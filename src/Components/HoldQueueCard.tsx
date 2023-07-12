@@ -20,41 +20,44 @@ export function HoldCard({ holdQueue, forceRender }: Props) {
               style={{
                 backgroundImage: `url(${character.Image.value})`,
               }}
-              draggable="true"
-              onDragStart={(e) => {
-                character.onDragStart(e, character);
-                forceRender();
-              }}
-              onDragOver={(e) => {
-                if (
-                  !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-                  !!JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
-                ) {
-                  character.onDragOver(e);
-                  forceRender();
-                }
-              }}
-              onDragLeave={() => {
-                character.onDragLeave();
-                forceRender();
-              }}
-              onDragEnd={() => {
-                character.onDragEnd();
-                forceRender();
-              }}
-              onDrop={(e) => {
-                if (
-                  !!JSON.parse(e.dataTransfer.getData("object"))
-                    .inBattleQueue &&
-                  !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
-                ) {
-                  changeArray(
-                    JSON.parse(e.dataTransfer.getData("object")).id,
-                    key,
-                    holdQueue
-                  );
-                }
-              }}
+              //------------------MAYBE LATER----------------------
+              // draggable="true"
+              // onDragStart={(e) => {
+              //   character.onDragStart(e, character);
+              //   forceRender();
+              // }}
+              // onDragOver={(e) => {
+              //   if (
+              //     !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
+              //     !!JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
+              //   ) {
+              //     character.onDragOver(e);
+              //     forceRender();
+              //   }
+              // }}
+              // onDragLeave={() => {
+              //   character.onDragLeave();
+              //   forceRender();
+              // }}
+              // onDragEnd={() => {
+              //   character.onDragEnd();
+              //   forceRender();
+              // }}
+              // onDrop={(e) => {
+              //   if (
+              //     !!JSON.parse(e.dataTransfer.getData("object"))
+              //       .inBattleQueue &&
+              //     !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
+              //   ) {
+              //     changeArray(
+              //       JSON.parse(e.dataTransfer.getData("object")).id,
+              //       "holdId",
+              //       key,
+              //       holdQueue
+              //     );
+              //   }
+              // }}
+              //-------------------------------------------------------------
             >
               <div
                 style={{ color: !!character.isDragging ? "green" : "black" }}
