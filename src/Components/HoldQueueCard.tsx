@@ -1,13 +1,14 @@
 import { Dispatch, Fragment, SetStateAction } from "react";
 import { Character } from "../Configs/CharacterConfig";
-import { changeArray } from "../Lib/MainArraysFunctions";
+import { changeArray, removeCharacter } from "../Lib/MainArraysFunctions";
 
 interface Props {
   holdQueue: Character[];
   forceRender: () => void;
+  setFunc: Dispatch<React.SetStateAction<Character[]>>;
 }
 
-export function HoldCard({ holdQueue, forceRender }: Props) {
+export function HoldCard({ holdQueue, forceRender, setFunc }: Props) {
   return (
     <div>
       {holdQueue.map((character: Character, key: number) => {
@@ -67,6 +68,21 @@ export function HoldCard({ holdQueue, forceRender }: Props) {
               <br />
               {character.Hold.comment}
               <br />
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  setFunc(
+                    (holdQueue = removeCharacter(
+                      character.battleId,
+                      "battleId",
+                      holdQueue
+                    ))
+                  );
+                  forceRender();
+                }}
+              >
+                X
+              </button>
             </div>
             {!!character.cardIsOver ? (
               <div className="dropDivider"></div> //Make it another component and later make animation with neighbour cards move apart

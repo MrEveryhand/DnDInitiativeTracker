@@ -91,7 +91,7 @@ export function changeArray(
 
   array.splice(charBuffer.arrayPosition, 1);
   array.splice(
-    charBuffer.arrayPosition < newIndex ? newIndex + 1 : newIndex,
+    charBuffer.arrayPosition > newIndex ? newIndex + 1 : newIndex,
     0,
     charBuffer
   );
@@ -196,4 +196,20 @@ export function holdQueueOnDrop(
     e.isDragging = false;
     e.cardIsOver = false;
   });
+}
+
+export function removeCharacter(
+  id: number,
+  idToCompare: string,
+  array: Character[]
+) {
+  let newArray = array.filter((e: any) => {
+    if (e[idToCompare] !== id) return true;
+  });
+
+  newArray.map((e, i) => {
+    e.arrayPosition = i;
+  });
+
+  return newArray;
 }

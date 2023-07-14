@@ -29,6 +29,7 @@ function App() {
         <CharacterCard
           characters={characterArray}
           forceRender={useForceUpdate}
+          setFunc={setCharacterArray}
         />
       </div>
       <div
@@ -41,7 +42,10 @@ function App() {
         {
           <BattleCard
             battleQueue={battleQueueArray}
+            holdQueue={holdQueueArray}
             forceRender={useForceUpdate}
+            setBattleFunc={setBattleQueue}
+            setHoldFunc={setHoldQueue}
           />
         }
       </div>
@@ -57,7 +61,13 @@ function App() {
           )
         }
       >
-        {<HoldCard holdQueue={holdQueueArray} forceRender={useForceUpdate} />}
+        {
+          <HoldCard
+            holdQueue={holdQueueArray}
+            forceRender={useForceUpdate}
+            setFunc={setHoldQueue}
+          />
+        }
       </div>
     </div>
   );

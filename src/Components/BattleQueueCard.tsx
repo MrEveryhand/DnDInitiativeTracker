@@ -1,11 +1,22 @@
+import { Dispatch } from "react";
 import { Character } from "../Configs/CharacterConfig";
+import { removeCharacter } from "../Lib/MainArraysFunctions";
 
 interface Props {
   battleQueue: Character[];
+  holdQueue: Character[];
   forceRender: () => void;
+  setBattleFunc: Dispatch<React.SetStateAction<Character[]>>;
+  setHoldFunc: Dispatch<React.SetStateAction<Character[]>>;
 }
 
-export function BattleCard({ battleQueue, forceRender }: Props) {
+export function BattleCard({
+  battleQueue,
+  holdQueue,
+  forceRender,
+  setBattleFunc,
+  setHoldFunc,
+}: Props) {
   return (
     <div>
       {battleQueue.map((character: Character, key: number) => {
@@ -39,6 +50,28 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
             <br />
             {character.State.value}
             <br />
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                setBattleFunc(
+                  (battleQueue = removeCharacter(
+                    character.battleId,
+                    "battleId",
+                    battleQueue
+                  ))
+                );
+                setHoldFunc(
+                  (holdQueue = removeCharacter(
+                    character.battleId,
+                    "battleId",
+                    holdQueue
+                  ))
+                );
+                forceRender();
+              }}
+            >
+              X
+            </button>
           </div>
         );
       })}

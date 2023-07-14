@@ -1,13 +1,14 @@
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Character } from "../Configs/CharacterConfig";
-import { changeArray } from "../Lib/MainArraysFunctions";
+import { changeArray, removeCharacter } from "../Lib/MainArraysFunctions";
 
 interface Props {
   characters: Character[];
   forceRender: () => void;
+  setFunc: Dispatch<React.SetStateAction<Character[]>>;
 }
 
-export function CharacterCard({ characters, forceRender }: Props) {
+export function CharacterCard({ characters, forceRender, setFunc }: Props) {
   return (
     <div className="charDraftArea">
       {characters.map((character: Character, key: number) => {
@@ -73,6 +74,20 @@ export function CharacterCard({ characters, forceRender }: Props) {
               <br />
               {character.State.value}
               <br />
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  setFunc(
+                    (characters = removeCharacter(
+                      character.id,
+                      "id",
+                      characters
+                    ))
+                  );
+                }}
+              >
+                X
+              </button>
             </div>
             {!!character.cardIsOver ? (
               <div className="dropDivider"></div> //Later make animation with neighbour cards move apart
