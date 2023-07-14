@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, createRef, useState } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { changeArray, removeCharacter } from "../Lib/MainArraysFunctions";
 
@@ -8,10 +8,16 @@ interface Props {
   setFunc: Dispatch<React.SetStateAction<Character[]>>;
 }
 
+export interface refObject {
+  [key: string]: any;
+}
+
 export function CharacterCard({ characters, forceRender, setFunc }: Props) {
+  let refObject: refObject = {};
   return (
     <div className="charDraftArea">
       {characters.map((character: Character, key: number) => {
+        refObject[character.id] = createRef();
         return (
           <Fragment>
             <div
@@ -65,6 +71,15 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
               >
                 <b>{character.Name.value}</b>
               </div>
+              <input
+                className="initInput"
+                ref={refObject[character.id]}
+                type="number"
+                onChange={(e) => {
+                  character.Initiative.value = parseInt(e.target.value);
+                  forceRender();
+                }}
+              />
               <br />
               {character.Agility.value}
               <br />

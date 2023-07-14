@@ -37,6 +37,10 @@
   float: left;
 }
 
+.initInput {
+  width: 50px;
+}
+
 .battleQueue {
   height: 200px;
   background-color: gray;
@@ -47,4 +51,13 @@
   height: 200px;
   background-color: rgb(192, 192, 192);
   padding: 2rem;
+}
+
+.holdQueue .charCard {
+  cursor: default;
+}
+
+.holdCommentInput {
+  resize: none;
+  width: 140px;
 }

@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, SetStateAction } from "react";
+import { Dispatch, Fragment, SetStateAction, createRef } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { changeArray, removeCharacter } from "../Lib/MainArraysFunctions";
 
@@ -8,10 +8,16 @@ interface Props {
   setFunc: Dispatch<React.SetStateAction<Character[]>>;
 }
 
+export interface refObject {
+  [key: string]: any;
+}
+
 export function HoldCard({ holdQueue, forceRender, setFunc }: Props) {
+  let refObject: refObject = {};
   return (
     <div>
       {holdQueue.map((character: Character, key: number) => {
+        refObject[character.battleId] = createRef();
         return (
           <Fragment>
             <div
@@ -66,7 +72,15 @@ export function HoldCard({ holdQueue, forceRender, setFunc }: Props) {
                 <b>{character.Name.value}</b>
               </div>
               <br />
-              {character.Hold.comment}
+              <textarea
+                className="holdCommentInput"
+                ref={refObject[character.battleId]}
+                onChange={(e) => {
+                  character.Hold.comment = e.target.value;
+                  forceRender();
+                }}
+                defaultValue={character.Hold.comment}
+              />
               <br />
               <button
                 className="btn btn-primary"

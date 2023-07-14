@@ -131,7 +131,9 @@ export function battleQueueOnDrop(
 
   charBuffer.battleId = maxId === -1 ? 0 : maxId + 1;
   charBuffer.inBattleQueue = true;
-  charBuffer.Initiative.value = Math.floor(Math.random() * 20) + 1; //Temporary solution <=======!!!
+  charBuffer.Initiative.value = JSON.parse(
+    e.dataTransfer.getData("object")
+  ).Initiative.value;
 
   battleArray.splice(0, 0, charBuffer);
 
