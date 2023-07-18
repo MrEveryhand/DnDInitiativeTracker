@@ -11,8 +11,6 @@ interface Hold {
 
 export class Character {
   id!: number;
-  battleId!: number;
-  holdId!: number;
   arrayPosition!: number;
   Name: characterParameter;
   Image: characterParameter;
@@ -23,7 +21,6 @@ export class Character {
   State: characterParameter;
   Hold: Hold;
   inBattleQueue: boolean = false;
-  inHoldQueue: boolean = false;
   constructor() {
     this.Name = {
       label: "Name", //Later create another language config and make dependencies with it
@@ -87,5 +84,3 @@ export class Character {
     this.isDragging = false;
   };
 }
-
-export var propsExceptions: object = { Initiative: -1 };

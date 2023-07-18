@@ -1,22 +1,22 @@
-import { Dispatch, Fragment, SetStateAction, createRef, useState } from "react";
+import { Fragment, createRef } from "react";
 import { Character } from "../Configs/CharacterConfig";
-import { changeArray, removeCharacter } from "../Lib/MainArraysFunctions";
+import { Queue } from "../Configs/Queues";
+import * as MainLib from "../Lib/MainArraysFunctions";
 
 interface Props {
-  characters: Character[];
+  characterQueue: Queue;
   forceRender: () => void;
-  setFunc: Dispatch<React.SetStateAction<Character[]>>;
 }
 
 export interface refObject {
   [key: string]: any;
 }
 
-export function CharacterCard({ characters, forceRender, setFunc }: Props) {
+export function CharacterCard({ characterQueue, forceRender }: Props) {
   let refObject: refObject = {};
   return (
     <div className="charDraftArea">
-      {characters.map((character: Character, key: number) => {
+      {characterQueue.queue.map((character: Character, key: number) => {
         refObject[character.id] = createRef();
         return (
           <Fragment>
@@ -33,10 +33,11 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
                 forceRender();
               }}
               onDragOver={(e) => {
-                if (
-                  !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-                  !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
-                ) {
+                MainLib.queueOnOver(
+                  e,
+                  !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue
+                );
+                {
                   character.onDragOver(e);
                   forceRender();
                 }
@@ -50,20 +51,13 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
                 forceRender();
               }}
               onDrop={(e) => {
-                if (
-                  !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
-                  !JSON.parse(e.dataTransfer.getData("object")).inHoldQueue
-                ) {
-                  character.onDrop(
-                    changeArray(
-                      JSON.parse(e.dataTransfer.getData("object")).id,
-                      "id",
-                      key,
-                      characters
-                    )
-                  );
-                  forceRender();
-                }
+                character.onDrop(
+                  characterQueue.queueChange(
+                    JSON.parse(e.dataTransfer.getData("object")).id,
+                    key
+                  )
+                );
+                forceRender();
               }}
             >
               <div
@@ -83,22 +77,17 @@ export function CharacterCard({ characters, forceRender, setFunc }: Props) {
               <br />
               {character.Agility.value}
               <br />
-              {character.CurrentHP.value}
+              {character.CurrentHP.value > 0 ? character.CurrentHP.value : null}
               <br />
-              {character.MaxHP.value}
+              {character.MaxHP.value > 0 ? character.MaxHP.value : null}
               <br />
-              {character.State.value}
+              {character.State.value.length > 0 ? character.State.value : null}
               <br />
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  setFunc(
-                    (characters = removeCharacter(
-                      character.id,
-                      "id",
-                      characters
-                    ))
-                  );
+                  characterQueue.queueRemove(character.id);
+                  forceRender();
                 }}
               >
                 X
