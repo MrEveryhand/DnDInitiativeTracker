@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { Queue } from "../Configs/Queues";
 
@@ -7,8 +8,12 @@ interface Props {
 }
 
 export function BattleCard({ battleQueue, forceRender }: Props) {
-  battleQueue.queue[battleQueue.pointer].Hold.isHold = false;
-  battleQueue.queue[battleQueue.pointer].Hold.comment = "";
+  if (!!battleQueue.queue[battleQueue.pointer]) {
+    battleQueue.queue[battleQueue.pointer].Hold.isHold = false;
+    battleQueue.queue[battleQueue.pointer].Hold.comment = "";
+  }
+
+  let [round, setRound] = useState(1);
 
   return (
     <div>
@@ -84,7 +89,10 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
                 </button>
               </div>
             ) : (
-              <div className="divider"></div>
+              <div className="divider">
+                Round {round}
+                <br /> Time {round * 6}
+              </div>
             );
           })}
       </div>
@@ -93,6 +101,8 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
           className="btn btn-primary"
           onClick={() => {
             battleQueue.modifyPointer(-1);
+            if (battleQueue.pointer === battleQueue.queue.length - 1) round--;
+            setRound(() => (round = round));
             forceRender();
           }}
         >
@@ -102,6 +112,8 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
           className="btn btn-primary"
           onClick={() => {
             battleQueue.modifyPointer(1);
+            if (battleQueue.pointer === battleQueue.queue.length - 1) round++;
+            setRound(() => (round = round));
             forceRender();
           }}
         >
