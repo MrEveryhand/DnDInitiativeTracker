@@ -4,8 +4,9 @@ import { Character } from "./CharacterConfig";
 export class Queue {
   queue: Character[];
   pointer!: number;
-  constructor() {
-    this.queue = [];
+  constructor(queue: Character[] = []) {
+    this.queue = queue || [];
+    this.pointer = 0;
   }
 
   public queueAdd(character: Character) {
@@ -82,5 +83,12 @@ export class Queue {
 
     this.queue = newArray;
     this.queueRefresh();
+  }
+
+  public modifyPointer(x: number) {
+    this.pointer += x;
+    if (this.pointer < 0) this.pointer = this.queue.length - 1;
+    if (this.pointer > this.queue.length - 1) this.pointer = 0;
+    if (this.queue.length === 1) this.pointer = 0;
   }
 }

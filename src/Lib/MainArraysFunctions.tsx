@@ -1,7 +1,6 @@
 import { Character } from "../Configs/CharacterConfig";
 import { refObject } from "../Components/CharacterCreator";
 import { RefObject } from "react";
-import { Queue } from "../Configs/Queues";
 
 export function setNewID(array: Character[]) {
   let newId = -1;
@@ -20,8 +19,8 @@ export function newCharacter(refObject: refObject, getTargetValue: Function) {
   for (const e in newCharacter) {
     currentProp = newCharacter[e as keyof typeof newCharacter];
     if (typeof currentProp === "object") {
-      currentProp.hasOwnProperty("type");
-      if (!!getTargetValue(refObject[e]))
+      if (e === "Image") currentProp.value = refObject[e].current.files[0];
+      else if (!!getTargetValue(refObject[e]))
         currentProp.value = getTargetValue(refObject[e]);
     }
   }

@@ -2,6 +2,7 @@ import { Fragment, createRef } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { Queue } from "../Configs/Queues";
 import * as MainLib from "../Lib/MainArraysFunctions";
+import axios from "axios";
 
 interface Props {
   characterQueue: Queue;
@@ -14,6 +15,7 @@ export interface refObject {
 
 export function CharacterCard({ characterQueue, forceRender }: Props) {
   let refObject: refObject = {};
+
   return (
     <div className="charDraftArea">
       {characterQueue.queue.map((character: Character, key: number) => {
@@ -25,7 +27,11 @@ export function CharacterCard({ characterQueue, forceRender }: Props) {
               id={key.toString()}
               className="charCard"
               style={{
-                backgroundImage: `url(${character.Image.value})`,
+                backgroundImage: `url(${
+                  !!character.Image.value
+                    ? URL.createObjectURL(character.Image.value)
+                    : ""
+                })`,
               }}
               draggable="true"
               onDragStart={(e) => {

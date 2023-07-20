@@ -27,6 +27,18 @@
   height: 200px;
   float: left;
   cursor: move;
+  background-size: cover;
+  background-position-x: center;
+  background-position-y: center;
+}
+
+.divider {
+  border: 1px black solid;
+  margin: 5px;
+  width: 75px;
+  height: 200px;
+  float: left;
+  background-color: brown;
 }
 
 .dropDivider {
@@ -60,4 +72,8 @@
 .holdCommentInput {
   resize: none;
   width: 140px;
+}
+
+.cardQueue {
+  height: 210px;
 }

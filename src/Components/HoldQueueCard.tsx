@@ -25,7 +25,11 @@ export function HoldCard({ battleQueue, forceRender }: Props) {
                 id={key.toString() + "_h"}
                 className="charCard"
                 style={{
-                  backgroundImage: `url(${character.Image.value})`,
+                  backgroundImage: `url(${
+                    !!character.Image.value
+                      ? URL.createObjectURL(character.Image.value)
+                      : ""
+                  })`,
                 }}
                 //------------------MAYBE LATER----------------------
                 // draggable="true"

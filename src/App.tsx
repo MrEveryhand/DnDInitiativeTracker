@@ -6,10 +6,14 @@ import BattleCard from "./Components/BattleQueueCard";
 import HoldCard from "./Components/HoldQueueCard";
 import * as MainLib from "./Lib/MainArraysFunctions";
 import { Queue } from "./Configs/Queues";
+import { Character } from "./Configs/CharacterConfig";
 
 function App() {
+  let turnDivider: Character = new Character();
+
   let [characterQueue, setCharacterQueue] = useState<Queue>(new Queue());
-  let [battleQueue, setBattleQueue] = useState<Queue>(new Queue());
+  let [battleQueue, setBattleQueue] = useState<Queue>(new Queue([turnDivider]));
+  const [round, setRound] = useState(0);
   const [value, setValue] = useState(0);
 
   function useForceUpdate() {
@@ -46,6 +50,12 @@ function App() {
             ? battleQueue.queueAdd(MainLib.copyCharacter(charBuffer))
             : null;
 
+          if (
+            charBuffer.Initiative.value >
+            battleQueue.queue[battleQueue.pointer].Initiative.value
+          )
+            battleQueue.modifyPointer(1);
+
           charBuffer.inBattleQueue = false;
         }}
       >
@@ -53,17 +63,18 @@ function App() {
       </div>
       <div
         className="holdQueue"
-        onDragOver={(e) =>
+        onDragOver={(e) => {
           MainLib.queueOnOver(
             e,
             !JSON.parse(e.dataTransfer.getData("object")).Hold.isHold
-          )
-        }
+          );
+        }}
         onDrop={(e) => {
           let charBuffer: any = battleQueue.searchCharacter(
             JSON.parse(e.dataTransfer.getData("object")).id
           );
           charBuffer.Hold.isHold = true;
+          battleQueue.modifyPointer(1);
           useForceUpdate();
         }}
       >
