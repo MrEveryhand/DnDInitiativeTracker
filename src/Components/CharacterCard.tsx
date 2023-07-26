@@ -1,4 +1,4 @@
-import { Fragment, createRef } from "react";
+import { Dispatch, Fragment, SetStateAction, createRef } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { Queue } from "../Configs/Queues";
 import * as MainLib from "../Lib/MainArraysFunctions";
@@ -6,14 +6,14 @@ import axios from "axios";
 
 interface Props {
   characterQueue: Queue;
-  forceRender: () => void;
+  setFunc: Dispatch<SetStateAction<Queue>>;
 }
 
 export interface refObject {
   [key: string]: any;
 }
 
-export function CharacterCard({ characterQueue, forceRender }: Props) {
+export function CharacterCard({ characterQueue, setFunc }: Props) {
   let refObject: refObject = {};
 
   return (
@@ -36,7 +36,7 @@ export function CharacterCard({ characterQueue, forceRender }: Props) {
               draggable="true"
               onDragStart={(e) => {
                 character.onDragStart(e, character);
-                forceRender();
+                MainLib.cloneClass(characterQueue);
               }}
               onDragOver={(e) => {
                 MainLib.queueOnOver(
@@ -45,16 +45,21 @@ export function CharacterCard({ characterQueue, forceRender }: Props) {
                 );
                 {
                   character.onDragOver(e);
-                  forceRender();
+                  setFunc(() =>
+                    Object.assign(
+                      Object.create(Object.getPrototypeOf(characterQueue)),
+                      characterQueue
+                    )
+                  );
                 }
               }}
               onDragLeave={() => {
                 character.onDragLeave();
-                forceRender();
+                MainLib.cloneClass(characterQueue);
               }}
               onDragEnd={() => {
                 character.onDragEnd();
-                forceRender();
+                MainLib.cloneClass(characterQueue);
               }}
               onDrop={(e) => {
                 character.onDrop(
@@ -63,7 +68,7 @@ export function CharacterCard({ characterQueue, forceRender }: Props) {
                     key
                   )
                 );
-                forceRender();
+                MainLib.cloneClass(characterQueue);
               }}
             >
               <div
@@ -77,7 +82,12 @@ export function CharacterCard({ characterQueue, forceRender }: Props) {
                 type="number"
                 onChange={(e) => {
                   character.Initiative.value = parseInt(e.target.value);
-                  forceRender();
+                  setFunc(() =>
+                    Object.assign(
+                      Object.create(Object.getPrototypeOf(characterQueue)),
+                      characterQueue
+                    )
+                  );
                 }}
               />
               <br />
@@ -93,7 +103,12 @@ export function CharacterCard({ characterQueue, forceRender }: Props) {
                 className="btn btn-primary"
                 onClick={() => {
                   characterQueue.queueRemove(character.id);
-                  forceRender();
+                  setFunc(() =>
+                    Object.assign(
+                      Object.create(Object.getPrototypeOf(characterQueue)),
+                      characterQueue
+                    )
+                  );
                 }}
               >
                 X

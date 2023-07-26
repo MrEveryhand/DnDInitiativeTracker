@@ -5,14 +5,14 @@ import * as MainLib from "../Lib/MainArraysFunctions";
 
 interface Props {
   characterQueue: Queue;
-  forceRender: Dispatch<SetStateAction<number>>;
+  setFunc: Dispatch<SetStateAction<Queue>>;
 }
 
 export interface refObject {
   [key: string]: any;
 }
 
-export function CharacterMenu({ characterQueue, forceRender }: Props) {
+export function CharacterMenu({ characterQueue, setFunc }: Props) {
   let charDummy = new Character();
   let characterPropsList = Object.getOwnPropertyNames(charDummy);
   let refObject: refObject = {};
@@ -39,7 +39,7 @@ export function CharacterMenu({ characterQueue, forceRender }: Props) {
             MainLib.newCharacter(refObject, MainLib.getTargetValue)
           );
           characterQueue.queueRefresh();
-          forceRender(1);
+          setFunc(() => MainLib.cloneClass(characterQueue));
         }}
       >
         Create

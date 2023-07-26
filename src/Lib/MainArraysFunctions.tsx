@@ -1,6 +1,7 @@
 import { Character } from "../Configs/CharacterConfig";
 import { refObject } from "../Components/CharacterCreator";
-import { RefObject } from "react";
+import { ClassType, RefObject } from "react";
+import { Queue } from "../Configs/Queues";
 
 export function setNewID(array: Character[]) {
   let newId = -1;
@@ -62,4 +63,8 @@ export function queueOnOver(e: any, condition: boolean) {
     e.stopPropagation();
     e.preventDefault();
   }
+}
+
+export function cloneClass(ex: any) {
+  return Object.assign(Object.create(Object.getPrototypeOf(ex)), ex);
 }

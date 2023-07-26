@@ -13,23 +13,17 @@ function App() {
 
   let [characterQueue, setCharacterQueue] = useState<Queue>(new Queue());
   let [battleQueue, setBattleQueue] = useState<Queue>(new Queue([turnDivider]));
-  const [round, setRound] = useState(0);
-  const [value, setValue] = useState(0);
-
-  function useForceUpdate() {
-    setValue((value) => value + 1);
-  }
 
   return (
     <div className="App">
       <div className="menuAndDraft">
         <CharacterMenu
           characterQueue={characterQueue}
-          forceRender={useForceUpdate}
+          setFunc={setCharacterQueue}
         />
         <CharacterCard
           characterQueue={characterQueue}
-          forceRender={useForceUpdate}
+          setFunc={setCharacterQueue}
         />
       </div>
       <div
@@ -57,9 +51,10 @@ function App() {
             battleQueue.modifyPointer(1);
 
           charBuffer.inBattleQueue = false;
+          setBattleQueue(() => MainLib.cloneClass(battleQueue));
         }}
       >
-        {<BattleCard battleQueue={battleQueue} forceRender={useForceUpdate} />}
+        {<BattleCard battleQueue={battleQueue} setFunc={setBattleQueue} />}
       </div>
       <div
         className="holdQueue"
@@ -75,10 +70,10 @@ function App() {
           );
           charBuffer.Hold.isHold = true;
           battleQueue.modifyPointer(1);
-          useForceUpdate();
+          setBattleQueue(() => MainLib.cloneClass(battleQueue));
         }}
       >
-        {<HoldCard battleQueue={battleQueue} forceRender={useForceUpdate} />}
+        {<HoldCard battleQueue={battleQueue} setFunc={setBattleQueue} />}
       </div>
     </div>
   );

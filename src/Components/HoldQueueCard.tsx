@@ -1,25 +1,26 @@
 import { Dispatch, Fragment, SetStateAction, createRef } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { Queue } from "../Configs/Queues";
+import * as MainLib from "../Lib/MainArraysFunctions";
 
 interface Props {
   battleQueue: Queue;
-  forceRender: () => void;
+  setFunc: Dispatch<SetStateAction<Queue>>;
 }
 
 export interface refObject {
   [key: string]: any;
 }
 
-export function HoldCard({ battleQueue, forceRender }: Props) {
+export function HoldCard({ battleQueue, setFunc }: Props) {
   let refObject: refObject = {};
   return (
-    <div>
+    <>
       {battleQueue.queue.map((character: Character, key: number) => {
         refObject[character.id] = createRef();
         if (!!character.Hold.isHold)
           return (
-            <Fragment>
+            <>
               <div
                 key={key.toString() + "_h"}
                 id={key.toString() + "_h"}
@@ -81,7 +82,7 @@ export function HoldCard({ battleQueue, forceRender }: Props) {
                   ref={refObject[character.id]}
                   onChange={(e) => {
                     character.Hold.comment = e.target.value;
-                    forceRender();
+                    setFunc(() => MainLib.cloneClass(battleQueue));
                   }}
                   defaultValue={character.Hold.comment}
                 />
@@ -91,7 +92,7 @@ export function HoldCard({ battleQueue, forceRender }: Props) {
                   onClick={() => {
                     character.Hold.isHold = false;
                     character.Hold.comment = "";
-                    forceRender();
+                    setFunc(() => MainLib.cloneClass(battleQueue));
                   }}
                 >
                   X
@@ -100,10 +101,10 @@ export function HoldCard({ battleQueue, forceRender }: Props) {
               {!!character.cardIsOver ? (
                 <div className="dropDivider"></div> //Make it another component and later make animation with neighbour cards move apart
               ) : null}
-            </Fragment>
+            </>
           );
       })}
-    </div>
+    </>
   );
 }
 

@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { Queue } from "../Configs/Queues";
+import * as MainLib from "../Lib/MainArraysFunctions";
 
 interface Props {
   battleQueue: Queue;
-  forceRender: () => void;
+  setFunc: Dispatch<SetStateAction<Queue>>;
 }
 
-export function BattleCard({ battleQueue, forceRender }: Props) {
+export function BattleCard({ battleQueue, setFunc }: Props) {
   if (!!battleQueue.queue[battleQueue.pointer]) {
     battleQueue.queue[battleQueue.pointer].Hold.isHold = false;
     battleQueue.queue[battleQueue.pointer].Hold.comment = "";
@@ -16,7 +17,7 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
   let [round, setRound] = useState(1);
 
   return (
-    <div>
+    <>
       <div className="cardQueue">
         {battleQueue.queue
           .sort((a: Character, b: Character) => {
@@ -32,12 +33,6 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
               offset < battleQueue.queue.length
                 ? offset
                 : offset - battleQueue.queue.length;
-
-            console.log(
-              battleQueue.pointer,
-              offset,
-              "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>"
-            );
 
             let currentChar = battleQueue.queue[offset];
             return currentChar.Initiative.value > -1 ? (
@@ -55,15 +50,15 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
                 draggable={battleQueue.pointer === offset ? "true" : "false"}
                 onDragStart={(e) => {
                   currentChar.onDragStart(e, currentChar);
-                  forceRender();
+                  setFunc(() => MainLib.cloneClass(battleQueue));
                 }}
                 onDragLeave={() => {
                   currentChar.onDragLeave();
-                  forceRender();
+                  setFunc(() => MainLib.cloneClass(battleQueue));
                 }}
                 onDragEnd={() => {
                   currentChar.onDragEnd();
-                  forceRender();
+                  setFunc(() => MainLib.cloneClass(battleQueue));
                 }}
               >
                 <div
@@ -82,7 +77,7 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
                   className="btn btn-primary"
                   onClick={() => {
                     battleQueue.queueRemove(currentChar.id);
-                    forceRender();
+                    setFunc(() => MainLib.cloneClass(battleQueue));
                   }}
                 >
                   X
@@ -96,14 +91,14 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
             );
           })}
       </div>
-      <div>
+      <>
         <button
           className="btn btn-primary"
           onClick={() => {
             battleQueue.modifyPointer(-1);
-            if (battleQueue.pointer === battleQueue.queue.length - 1) round--;
-            setRound(() => (round = round));
-            forceRender();
+            if (battleQueue.pointer === battleQueue.queue.length - 1)
+              setRound(() => round - 1);
+            setFunc(() => MainLib.cloneClass(battleQueue));
           }}
         >
           Previous turn
@@ -112,15 +107,15 @@ export function BattleCard({ battleQueue, forceRender }: Props) {
           className="btn btn-primary"
           onClick={() => {
             battleQueue.modifyPointer(1);
-            if (battleQueue.pointer === battleQueue.queue.length - 1) round++;
-            setRound(() => (round = round));
-            forceRender();
+            if (battleQueue.pointer === battleQueue.queue.length - 1)
+              setRound(() => round + 1);
+            setFunc(() => MainLib.cloneClass(battleQueue));
           }}
         >
           Next turn
         </button>
-      </div>
-    </div>
+      </>
+    </>
   );
 }
 
