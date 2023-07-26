@@ -1,4 +1,4 @@
-import { setNewID } from "../Lib/MainArraysFunctions";
+import { idStorage } from "./IdStorage";
 import { Character } from "./CharacterConfig";
 
 export class Queue {
@@ -11,10 +11,7 @@ export class Queue {
 
   public queueAdd(character: Character) {
     let charBuffer = character;
-
-    charBuffer.id = -1;
-    charBuffer.id = setNewID(this.queue);
-
+    charBuffer.id = idStorage.generateId();
     this.queue.splice(this.queue.length, 0, charBuffer);
     this.queueRefresh();
   }

@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import "./App.css";
 import CharacterMenu from "./Components/CharacterCreator";
-import CharacterCard from "./Components/CharacterCard";
-import BattleCard from "./Components/BattleQueueCard";
-import HoldCard from "./Components/HoldQueueCard";
+import CharacterCard from "./Components/Queues/DraftQueue";
+import BattleQueue from "./Components/Queues/BattleQueue";
+import { HoldQueue } from "./Components/Queues/HoldQueue";
 import * as MainLib from "./Lib/MainArraysFunctions";
 import { Queue } from "./Configs/Queues";
 import { Character } from "./Configs/CharacterConfig";
 
 function App() {
   let turnDivider: Character = new Character();
+  turnDivider.id = 0;
 
   let [characterQueue, setCharacterQueue] = useState<Queue>(new Queue());
   let [battleQueue, setBattleQueue] = useState<Queue>(new Queue([turnDivider]));
@@ -54,7 +55,7 @@ function App() {
           setBattleQueue(() => MainLib.cloneClass(battleQueue));
         }}
       >
-        {<BattleCard battleQueue={battleQueue} setFunc={setBattleQueue} />}
+        {<BattleQueue battleQueue={battleQueue} setFunc={setBattleQueue} />}
       </div>
       <div
         className="holdQueue"
@@ -73,7 +74,7 @@ function App() {
           setBattleQueue(() => MainLib.cloneClass(battleQueue));
         }}
       >
-        {<HoldCard battleQueue={battleQueue} setFunc={setBattleQueue} />}
+        {<HoldQueue battleQueue={battleQueue} setFunc={setBattleQueue} />}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { Dispatch, RefObject, SetStateAction, createRef } from "react";
 import { Character } from "../Configs/CharacterConfig";
 import { Queue } from "../Configs/Queues";
 import * as MainLib from "../Lib/MainArraysFunctions";
+import { idStorage } from "../Configs/IdStorage";
 
 interface Props {
   characterQueue: Queue;
