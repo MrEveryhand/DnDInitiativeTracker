@@ -1,24 +1,16 @@
-import { Dispatch, SetStateAction, createRef } from "react";
-import { Queue } from "../../Configs/Queues";
+import { Dispatch, SetStateAction, memo } from "react";
 import { Character } from "../../Configs/CharacterConfig";
-import * as MainLib from "../../Lib/MainArraysFunctions";
-import { refObject } from "../DraftQueue";
+import * as CharFunc from "../../Lib/CharacterConfigFunctions";
+import * as QueueFunc from "../../Lib/QueuesFunctions";
 
 interface Props {
-  characterQueue: Queue;
   character: Character;
-  setFunc: Dispatch<SetStateAction<Queue>>;
+  setFunc: Dispatch<SetStateAction<Character[]>>;
+  queueFunc: QueueFunc.queueFunctions;
   _key: number;
-  refObject: refObject;
 }
 
-export function Card({
-  characterQueue,
-  character,
-  setFunc,
-  _key,
-  refObject,
-}: Props) {
+const Card = memo(({ character, setFunc, queueFunc, _key }: Props) => {
   return (
     <>
       <div
@@ -33,35 +25,47 @@ export function Card({
         }}
         draggable="true"
         onDragStart={(e) => {
-          character.onDragStart(e, character);
-          MainLib.cloneClass(characterQueue);
+          CharFunc.onDragStart(e, character);
         }}
         onDragOver={(e) => {
-          MainLib.queueOnOver(
+          queueFunc.queueOnOver(
             e,
-            !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue
+            !JSON.parse(e.dataTransfer.getData("object")).inBattleQueue &&
+              !JSON.parse(e.dataTransfer.getData("object")).cardIsOver
           );
           {
-            character.onDragOver(e);
-            setFunc(() => MainLib.cloneClass(characterQueue));
+            queueFunc.changeQueueValue(
+              setFunc,
+              character.id,
+              "cardIsOver",
+              true
+            );
           }
         }}
         onDragLeave={() => {
-          character.onDragLeave();
-          MainLib.cloneClass(characterQueue);
+          queueFunc.changeQueueValue(
+            setFunc,
+            character.id,
+            "cardIsOver",
+            false
+          );
         }}
         onDragEnd={() => {
-          character.onDragEnd();
-          MainLib.cloneClass(characterQueue);
+          queueFunc.changeQueueValue(
+            setFunc,
+            character.id,
+            "isDragging",
+            false
+          );
         }}
         onDrop={(e) => {
-          character.onDrop(
-            characterQueue.queueChange(
+          CharFunc.onDrop(
+            queueFunc.queueChange(
+              setFunc,
               JSON.parse(e.dataTransfer.getData("object")).id,
               _key
             )
           );
-          MainLib.cloneClass(characterQueue);
         }}
       >
         <div key={character.id.toString() + "name"}>
@@ -69,27 +73,35 @@ export function Card({
         </div>
         <input
           className="initInput"
-          ref={refObject[character.id]}
           type="number"
           onChange={(e) => {
-            character.Initiative.value = parseInt(e.target.value);
-            setFunc(() => MainLib.cloneClass(characterQueue));
+            queueFunc.changeQueueValue(
+              setFunc,
+              character.id,
+              "Initiative",
+              e.target.value
+            );
           }}
         />
         <br />
-        {character.Agility.value}
+        {character.Agility.value > 0
+          ? "Aglilty:" + character.Agility.value
+          : null}
         <br />
-        {character.CurrentHP.value > 0 ? character.CurrentHP.value : null}
+        {character.CurrentHP.value > 0
+          ? "CurrentHP: " + character.CurrentHP.value
+          : null}
         <br />
-        {character.MaxHP.value > 0 ? character.MaxHP.value : null}
+        {character.MaxHP.value > 0 ? "MaxHP: " + character.MaxHP.value : null}
         <br />
-        {character.State.value.length > 0 ? character.State.value : null}
+        {character.State.value.length > 0
+          ? "State: " + character.State.value
+          : null}
         <br />
         <button
           className="btn btn-primary"
           onClick={() => {
-            characterQueue.queueRemove(character.id);
-            setFunc(() => MainLib.cloneClass(characterQueue));
+            queueFunc.queueRemove(setFunc, character.id);
           }}
         >
           X
@@ -100,6 +112,6 @@ export function Card({
       ) : null}
     </>
   );
-}
+});
 
 export default Card;

@@ -1,24 +1,17 @@
-import { Dispatch, SetStateAction, createRef } from "react";
-import { Queue } from "../../Configs/Queues";
+import { Dispatch, SetStateAction, memo } from "react";
 import { Character } from "../../Configs/CharacterConfig";
-import * as MainLib from "../../Lib/MainArraysFunctions";
-import { refObject } from "../DraftQueue";
+import { refObject } from "../Queues/DraftQueue";
 
 interface Props {
-  battleQueue: Queue;
+  battleQueue: Character[];
   character: Character;
-  setFunc: Dispatch<SetStateAction<Queue>>;
+  setFunc: Dispatch<SetStateAction<Character[]>>;
   refObject: refObject;
 }
 
-export function HoldCard({
-  battleQueue,
-  character,
-  setFunc,
-  refObject,
-}: Props) {
-  return (
-    <>
+const HoldCard = memo(
+  ({ battleQueue, character, setFunc, refObject }: Props) => {
+    return (
       <div
         key={character.id.toString() + "_h"}
         id={character.id.toString() + "_h"}
@@ -40,7 +33,6 @@ export function HoldCard({
           ref={refObject[character.id]}
           onChange={(e) => {
             character.Hold.comment = e.target.value;
-            setFunc(() => MainLib.cloneClass(battleQueue));
           }}
           defaultValue={character.Hold.comment}
         />
@@ -50,17 +42,14 @@ export function HoldCard({
           onClick={() => {
             character.Hold.isHold = false;
             character.Hold.comment = "";
-            setFunc(() => MainLib.cloneClass(battleQueue));
+            setFunc([...battleQueue]);
           }}
         >
           X
         </button>
       </div>
-      {!!character.cardIsOver ? (
-        <div className="dropDivider"></div> //Make it another component and later make animation with neighbour cards move apart
-      ) : null}
-    </>
-  );
-}
+    );
+  }
+);
 
 export default HoldCard;

@@ -1,38 +1,34 @@
-import { Dispatch, SetStateAction, createRef } from "react";
+import { Dispatch, SetStateAction, memo } from "react";
 import { Character } from "../../Configs/CharacterConfig";
-import { Queue } from "../../Configs/Queues";
-import axios from "axios";
 import Card from "../Cards/DraftCard";
+import { queueFunctions } from "../../Lib/QueuesFunctions";
 
 interface Props {
-  characterQueue: Queue;
-  setFunc: Dispatch<SetStateAction<Queue>>;
+  characterQueue: Character[];
+  setFunc: Dispatch<SetStateAction<Character[]>>;
+  queueFunc: queueFunctions;
 }
 
 export interface refObject {
   [key: string]: any;
 }
 
-export function CharacterCard({ characterQueue, setFunc }: Props) {
-  let refObject: refObject = {};
-
+const CharacterCard = memo(({ characterQueue, setFunc, queueFunc }: Props) => {
   return (
     <div key="charDraftArea" className="charDraftArea">
-      {characterQueue.queue.map((character: Character, key: number) => {
-        refObject[character.id] = createRef();
+      {characterQueue.map((character: Character, key: number) => {
         return (
           <Card
             key={character.id}
-            characterQueue={characterQueue}
             character={character}
             setFunc={setFunc}
+            queueFunc={queueFunc}
             _key={key}
-            refObject={refObject}
           />
         );
       })}
     </div>
   );
-}
+});
 
 export default CharacterCard;

@@ -65,22 +65,4 @@ export class Character {
 
   isDragging: boolean = false;
   cardIsOver: boolean = false;
-  onDragStart = (e: any, character: Character) => {
-    this.isDragging = true;
-    e.dataTransfer.setData("object", JSON.stringify(character));
-  };
-  onDragOver = (e: any) => {
-    this.cardIsOver = true;
-    e.stopPropagation();
-    e.preventDefault();
-  };
-  onDragLeave = () => {
-    this.cardIsOver = false;
-  };
-  onDrop = (endFunc: void) => {
-    endFunc;
-  };
-  onDragEnd = () => {
-    this.isDragging = false;
-  };
 }

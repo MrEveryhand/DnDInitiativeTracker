@@ -1,21 +1,20 @@
-import { Dispatch, SetStateAction, createRef } from "react";
-import { Queue } from "../../Configs/Queues";
+import { Dispatch, SetStateAction, memo } from "react";
 import { Character } from "../../Configs/CharacterConfig";
-import * as MainLib from "../../Lib/MainArraysFunctions";
-import { refObject } from "../DraftQueue";
+import * as CharFunc from "../../Lib/CharacterConfigFunctions";
+import * as QueueFunc from "../../Lib/QueuesFunctions";
 
 interface Props {
-  battleQueue: Queue;
+  battleQueue: Character[];
   character: Character;
-  setFunc: Dispatch<SetStateAction<Queue>>;
-  offset: number;
+  setFunc: Dispatch<SetStateAction<Character[]>>;
+  draggable: boolean;
+  queueFunc: QueueFunc.queueFunctions;
 }
 
-export function BattleCard({ battleQueue, character, setFunc, offset }: Props) {
-  return (
-    <>
+const BattleCard = memo(
+  ({ battleQueue, character, setFunc, draggable, queueFunc }: Props) => {
+    return (
       <div
-        key={character.id}
         id={character.id.toString() + "_b"}
         className="charCard"
         style={{
@@ -25,18 +24,13 @@ export function BattleCard({ battleQueue, character, setFunc, offset }: Props) {
               : ""
           })`,
         }}
-        draggable={battleQueue.pointer === offset ? "true" : "false"}
+        draggable={!!draggable ? "true" : "false"}
         onDragStart={(e) => {
-          character.onDragStart(e, character);
-          setFunc(() => MainLib.cloneClass(battleQueue));
-        }}
-        onDragLeave={() => {
-          character.onDragLeave();
-          setFunc(() => MainLib.cloneClass(battleQueue));
+          CharFunc.onDragStart(e, character);
         }}
         onDragEnd={() => {
-          character.onDragEnd();
-          setFunc(() => MainLib.cloneClass(battleQueue));
+          CharFunc.onDragEnd(character);
+          setFunc([...battleQueue]);
         }}
       >
         <div>
@@ -50,15 +44,14 @@ export function BattleCard({ battleQueue, character, setFunc, offset }: Props) {
         <button
           className="btn btn-primary"
           onClick={() => {
-            battleQueue.queueRemove(character.id);
-            setFunc(() => MainLib.cloneClass(battleQueue));
+            queueFunc.queueRemove(setFunc, character.id);
           }}
         >
           X
         </button>
       </div>
-    </>
-  );
-}
+    );
+  }
+);
 
 export default BattleCard;
